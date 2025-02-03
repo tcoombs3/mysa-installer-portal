@@ -1,0 +1,59 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Build React app
+        working-directory: ./client
+        run: |
+          npm install
+          npm run build
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build container image
+        run: docker build -t ticket-system:$(echo $GITHUB_SHA | head -c7) .
+
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 600
+
+      - name: Tag image
+        run: |
+          docker tag ticket-system:$(echo $GITHUB_SHA | head -c7) \
+          registry.digitalocean.com/your-registry/ticket-system:$(echo $GITHUB_SHA | head -c7)
+
+      - name: Push image to DigitalOcean Container Registry
+        run: |
+          docker push registry.digitalocean.com/your-registry/ticket-system:$(echo $GITHUB_SHA | head -c7)
+
+      - name: Update deployment file
+        run: |
+          TAG=$(echo $GITHUB_SHA | head -c7)
+          sed -i 's|<IMAGE>|registry.digitalocean.com/your-registry/ticket-system:'${TAG}'|' $GITHUB_WORKSPACE/config/deployment.yml
+
+      - name: Deploy to DigitalOcean Droplet
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USERNAME }}
+          key: ${{ secrets.DROPLET_SSH_KEY }}
+          script: |
+            cd ~/ticket-management-system
+            git pull origin main
+            docker-compose pull
+            docker-compose up -d --build
