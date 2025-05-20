@@ -23,10 +23,14 @@ const apiLimiter = rateLimit({
 // Apply rate limiting to API routes
 app.use('/api', apiLimiter);
 
-// Use mock data routes for testing instead of real Airtable connections
-app.use('/api', require('./routes/mock-data'));
+// API Routes
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/sites', require('./routes/sites'));
+app.use('/api/devices', require('./routes/devices'));
+app.use('/api/qr', require('./routes/qr'));
+app.use('/api/issues', require('./routes/issues'));
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 
 // Error handling middleware
 app.use((err, req, res, next) => {
