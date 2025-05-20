@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Installer View - Mysa Installer Portal</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    header {
+      background-color: #0078FF;
+      color: white;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .btn {
+      display: inline-block;
+      background: #0078FF;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 4px;
+      text-decoration: none;
+      margin-right: 10px;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #0057B8;
+    }
+    .btn-danger {
+      background: #d32f2f;
+    }
+    .btn-danger:hover {
+      background: #b71c1c;
+    }
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background-color: #e0e0e0;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+    .progress-bar {
+      height: 100%;
+      background-color: #0078FF;
+      border-radius: 5px;
+      width: 0%; /* Will be updated by JavaScript */
+    }
+    .step-card {
+      border-left: 4px solid #e0e0e0;
+      padding-left: 15px;
+      margin-bottom: 15px;
+    }
+    .step-card.pending {
+      border-left-color: #e0e0e0;
+    }
+    .step-card.in-progress {
+      border-left-color: #0078FF;
+    }
+    .step-card.completed {
+      border-left-color: #4CAF50;
+    }
+    .step-card.issue {
+      border-left-color: #d32f2f;
+    }
+    .step-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background-color: #e0e0e0;
+      border-radius: 50%;
+      margin-right: 10px;
+      font-size: 14px;
+    }
+    .step-status {
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+      z-index: 1000;
+    }
+    .modal-content {
+      position: relative;
+      background: white;
+      max-width: 500px;
+      margin: 100px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div>
+          <h1>Windsurf Demo Client</h1>
+          <p>123 Test Street, Demo City</p>
+          <p><small>Site ID: DEMO-SITE-001</small></p>
+        </div>
+        <button class="btn btn-danger" id="report-issue-btn">Report Issue</button>
+      </div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <!-- Progress Bar -->
+    <div class="card">
+      <h3>Installation Progress</h3>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+      <p id="progress-text">0/3 completed</p>
+    </div>
+    
+    <!-- Installation Steps -->
+    <div class="card">
+      <h2>Installation Steps</h2>
+      <div id="steps-container">
+        <div class="step-card pending" id="step-1">
+          <div class="step-header">
+            <h3>
+              <span class="step-number">1</span>
+              Living Room Thermostat
+            </h3>
+            <select class="step-status" data-device-id="1">
+              <option value="pending" selected>Not Started</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="issue">Has Issue</option>
+            </select>
+          </div>
+          <p><small>Est. time: 10 min</small></p>
+          <div>
+            <button class="btn-notes" data-device-id="1">Add Notes</button>
+            <a href="#" class="btn-help">Help</a>
+          </div>
+          <div class="notes-form" id="notes-form-1" style="display: none; margin-top: 10px;">
+            <textarea style="width: 100%; height: 80px; margin-bottom: 10px;" placeholder="Add installation notes..."></textarea>
+            <button class="btn save-notes" data-device-id="1">Save Notes</button>
+            <button class="btn-cancel">Cancel</button>
+          </div>
+        </div>
+        
+        <div class="step-card pending" id="step-2">
+          <div class="step-header">
+            <h3>
+              <span class="step-number">2</span>
+              Bedroom Thermostat
+            </h3>
+            <select class="step-status" data-device-id="2">
+              <option value="pending" selected>Not Started</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="issue">Has Issue</option>
+            </select>
+          </div>
+          <p><small>Est. time: 10 min</small></p>
+          <div>
+            <button class="btn-notes" data-device-id="2">Add Notes</button>
+            <a href="#" class="btn-help">Help</a>
+          </div>
+          <div class="notes-form" id="notes-form-2" style="display: none; margin-top: 10px;">
+            <textarea style="width: 100%; height: 80px; margin-bottom: 10px;" placeholder="Add installation notes..."></textarea>
+            <button class="btn save-notes" data-device-id="2">Save Notes</button>
+            <button class="btn-cancel">Cancel</button>
+          </div>
+        </div>
+        
+        <div class="step-card pending" id="step-3">
+          <div class="step-header">
+            <h3>
+              <span class="step-number">3</span>
+              Bathroom Thermostat
+            </h3>
+            <select class="step-status" data-device-id="3">
+              <option value="pending" selected>Not Started</option>
+              <option value="in_progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="issue">Has Issue</option>
+            </select>
+          </div>
+          <p><small>Est. time: 10 min</small></p>
+          <div>
+            <button class="btn-notes" data-device-id="3">Add Notes</button>
+            <a href="#" class="btn-help">Help</a>
+          </div>
+          <div class="notes-form" id="notes-form-3" style="display: none; margin-top: 10px;">
+            <textarea style="width: 100%; height: 80px; margin-bottom: 10px;" placeholder="Add installation notes..."></textarea>
+            <button class="btn save-notes" data-device-id="3">Save Notes</button>
+            <button class="btn-cancel">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Completion Section (hidden initially) -->
+    <div class="card" id="completion-section" style="display: none; text-align: center; background-color: #e8f5e9; border: 1px solid #a5d6a7;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <h2>Installation Complete!</h2>
+      <p>Thank you for completing all installation steps. The client has been notified.</p>
+      <a href="#" class="btn">Visit Support Center</a>
+    </div>
+  </div>
+  
+  <footer class="container">
+    <p>&copy; 2025 Mysa. All rights reserved.</p>
+    <a href="#">Support Center</a>
+  </footer>
+  
+  <!-- Issue Report Modal (hidden initially) -->
+  <div id="issue-modal" class="modal">
+    <div class="modal-content">
+      <h2>Report an Issue</h2>
+      <form id="issue-form">
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px;">Issue Description <span style="color: red;">*</span></label>
+          <textarea id="issue-description" style="width: 100%; height: 100px; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required></textarea>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px;">Priority</label>
+          <select id="issue-priority" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px;">Your Name</label>
+          <input type="text" id="issue-reporter" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+        </div>
+        <div style="margin-bottom: 15px;">
+          <label style="display: block; margin-bottom: 5px;">Contact Information</label>
+          <input type="text" id="issue-contact" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" placeholder="Phone or email">
+        </div>
+        <div style="text-align: right;">
+          <button type="button" id="cancel-issue" class="btn" style="background-color: #9e9e9e;">Cancel</button>
+          <button type="submit" class="btn btn-danger">Submit Issue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    // Demo functionality for the installer view
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize step cards
+      const stepCards = document.querySelectorAll('.step-card');
+      const statusSelects = document.querySelectorAll('.step-status');
+      const progressBar = document.getElementById('progress-bar');
+      const progressText = document.getElementById('progress-text');
+      const completionSection = document.getElementById('completion-section');
+      
+      // Update progress bar
+      function updateProgress() {
+        const total = statusSelects.length;
+        const completed = Array.from(statusSelects).filter(select => select.value === 'completed').length;
+        const progressPercent = total > 0 ? (completed / total) * 100 : 0;
+        
+        progressBar.style.width = progressPercent + '%';
+        progressText.textContent = completed + '/' + total + ' completed';
+        
+        // Show completion section if all steps are completed
+        if (completed === total && total > 0) {
+          completionSection.style.display = 'block';
+        } else {
+          completionSection.style.display = 'none';
+        }
+      }
+      
+      // Update step card status
+      function updateStepCardStatus(deviceId, status) {
+        const stepCard = document.getElementById('step-' + deviceId);
+        stepCard.className = 'step-card ' + status;
+      }
+      
+      // Handle status change
+      statusSelects.forEach(select => {
+        select.addEventListener('change', function() {
+          const deviceId = this.getAttribute('data-device-id');
+          const status = this.value;
+          
+          // Update UI
+          updateStepCardStatus(deviceId, status);
+          updateProgress();
+          
+          // In a real app, we would send this update to the server
+          console.log('Updated device ' + deviceId + ' status to ' + status);
+        });
+      });
+      
+      // Initialize notes buttons
+      const notesButtons = document.querySelectorAll('.btn-notes');
+      notesButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const deviceId = this.getAttribute('data-device-id');
+          const notesForm = document.getElementById('notes-form-' + deviceId);
+          notesForm.style.display = 'block';
+        });
+      });
+      
+      // Handle save notes
+      const saveNotesButtons = document.querySelectorAll('.save-notes');
+      saveNotesButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const deviceId = this.getAttribute('data-device-id');
+          const notesForm = document.getElementById('notes-form-' + deviceId);
+          const notesText = notesForm.querySelector('textarea').value;
+          
+          // In a real app, we would send this to the server
+          console.log('Saved notes for device ' + deviceId + ': ' + notesText);
+          
+          // Update UI
+          const stepCard = document.getElementById('step-' + deviceId);
+          let notesElement = stepCard.querySelector('p em');
+          if (notesElement) {
+            notesElement.textContent = 'Notes: ' + notesText;
+          } else {
+            const notesP = document.createElement('p');
+            notesP.innerHTML = '<em>Notes: ' + notesText + '</em>';
+            stepCard.insertBefore(notesP, stepCard.querySelector('div'));
+          }
+          notesForm.style.display = 'none';
+        });
+      });
+      
+      // Handle cancel notes
+      const cancelButtons = document.querySelectorAll('.btn-cancel');
+      cancelButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const notesForm = this.closest('.notes-form');
+          notesForm.style.display = 'none';
+        });
+      });
+      
+      // Issue reporting
+      const reportIssueBtn = document.getElementById('report-issue-btn');
+      const issueModal = document.getElementById('issue-modal');
+      const cancelIssueBtn = document.getElementById('cancel-issue');
+      const issueForm = document.getElementById('issue-form');
+      
+      reportIssueBtn.addEventListener('click', function() {
+        issueModal.style.display = 'block';
+      });
+      
+      cancelIssueBtn.addEventListener('click', function() {
+        issueModal.style.display = 'none';
+      });
+      
+      issueForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const issueData = {
+          siteId: 'DEMO-SITE-001',
+          description: document.getElementById('issue-description').value,
+          priority: document.getElementById('issue-priority').value,
+          reportedBy: document.getElementById('issue-reporter').value,
+          contactInfo: document.getElementById('issue-contact').value
+        };
+        
+        // In a real app, we would send this to the server
+        console.log('Issue reported:', issueData);
+        alert('Issue reported successfully! Ticket ID: TICKET-' + Math.floor(Math.random() * 10000));
+        issueModal.style.display = 'none';
+      });
+      
+      // Initialize
+      updateProgress();
+    });
+  </script>
+</body>
+</html>
